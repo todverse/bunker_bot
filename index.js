@@ -105,7 +105,7 @@ bot.on('message', async (msg) => {
             if(!activeGames.started_at) {
                 switch(msg.text) {
                     case 'Запустить игру ⚡️':
-                        if(activeGames.users.length <= 1) {
+                        if(activeGames.users.length <= 2) {
                             if(activeGames.owner == user.id) {
                                 reply_markup.keyboard = owner_start_game_menu
                             } else {
