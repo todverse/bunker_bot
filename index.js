@@ -419,7 +419,7 @@ app.listen(3000, () => {
     console.log('REGISTER CRON')
     const cronFunc = async () => {
         try {
-            let a = await fetch('http://localhost:3000/', {
+            let a = await fetch('https://bunker-bot-f9sq.onrender.com/', {
                 method: 'GET'
             })
             a = await a.text()
@@ -430,7 +430,7 @@ app.listen(3000, () => {
     }
     cronFunc()
     new CronJob(
-        '*/10 * * * *',//'0 * * * *'
+        '*/5 * * * *',//'0 * * * *'
         async function () {
             console.log('RUN CRON JOB')
             cronFunc()
