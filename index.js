@@ -414,13 +414,17 @@ app.get('/', async (req, res) => {
     res.send(`Ссылка на бота https://t.me/${bot_data.username}`)
 });
 
+app.post('/ping', async (req, res) => {
+    res.send(`pong`)
+});
+
 app.listen(3000, () => {
     console.log('Сервер запущен на http://localhost:3000');
     console.log('REGISTER CRON')
     const cronFunc = async () => {
         try {
-            let a = await fetch('https://bunker-bot-f9sq.onrender.com/', {
-                method: 'GET'
+            let a = await fetch('https://bunker-bot-f9sq.onrender.com/ping', {
+                method: 'POST'
             })
             a = await a.text()
             console.log(a)
