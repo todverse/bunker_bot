@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 require('dotenv').config();
-const CronJob = require('cron');
+const {CronJob} = require('cron');
 const { register, create_game, join_game, getActiveGamesByMember, start_game, updateGameUserData, updateGameActiveUser, updateGameCountLeave, updateGameOwner, end_game, updateUserCreating, updateGameVoiting } = require('./db.js')
 
 const { data_translate } = require('./userData.js')
@@ -415,33 +415,27 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log('Сервер запущен на http://localhost:3000');
-});
-
-console.log('REGISTER CRON')
-try {
-    let a = await fetch('/', {
-        method: 'GET'
-    })
-    a = await a.json()
-    console.log(a)
-} catch(e) {
-    console.log(e)
-}
-new CronJob(
-    '*/10 * * * *',//'0 * * * *'
-    async function () {
-        console.log('RUN CRON JOB')
+    console.log('Сервер запущен на http://localhost:3000');
+    console.log('REGISTER CRON')
+    const cronFunc = async () => {
         try {
-            let a = await fetch('/', {
+            let a = await fetch('http://localhost:3000/', {
                 method: 'GET'
             })
-            a = await a.json()
+            a = await a.text()
             console.log(a)
         } catch(e) {
             console.log(e)
         }
-    }, // onTick
-    null, // onComplete
-    true // start
-)  
+    }
+    cronFunc()
+    new CronJob(
+        '*/10 * * * *',//'0 * * * *'
+        async function () {
+            console.log('RUN CRON JOB')
+            cronFunc()
+        }, // onTick
+        null, // onComplete
+        true // start
+    )  
+});
