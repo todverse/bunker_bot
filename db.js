@@ -134,6 +134,10 @@ const end_game = async (game) => {
         'UPDATE games SET ended_at = $1 WHERE id = $2 RETURNING *',
         [new Date().toISOString().replace('Z', '+00'), game.id]
     );
+    await client.query(
+        'DELETE FROM games WHERE id = $1',
+        [game.id]
+    );
     return res.rows[0]
 }
 
