@@ -1,4 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
+const express = require('express');
 require('dotenv').config();
 const { register, create_game, join_game, getActiveGamesByMember, start_game, updateGameUserData, updateGameActiveUser, updateGameCountLeave, updateGameOwner, end_game, updateUserCreating, updateGameVoiting } = require('./db.js')
 
@@ -402,3 +403,16 @@ bot.on('message', async (msg) => {
         }
     }
 })
+
+const app = express();
+
+app.use(express.json({ limit: '20mb' }));
+
+app.get('/', async (req, res) => {
+    const bot_data = await bot.getMe()
+    res.send(`Ссылка на бота t.me/${bot_data.username}`)
+});
+
+app.listen(3000, () => {
+  console.log('Сервер запущен на http://localhost:3000');
+});
