@@ -115,20 +115,54 @@ bot.on('message', async (msg) => {
                 reply_markup.keyboard = chunkArray(keyboard_users, 2)
                 if(activeGames.is_voiting) {
                     let curr_usr = false
-                    if(msg.text == 'ИЗГНАТЬ') {
-                        if(activeGames.count_leave) {
-                            activeGames.count_leave++
+                    if(msg.text == 'ИЗГНАТЬ' || msg.text == 'ОСТАВИТЬ') {
+                        let stay = 0
+                        let leave = 0
+                        if(msg.text == 'ИЗГНАТЬ') {
+                            if(activeGames.count_leave) {
+                                activeGames.count_leave++
+                            } else {
+                                activeGames.count_leave = 1
+                            }
+                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length - 1) {
+                                await updateGameCountLeave(activeGames)
+                                return
+                            }
                         } else {
-                            activeGames.count_leave = 1
+                            if(activeGames.count_stay) {
+                                activeGames.count_stay++
+                            } else {
+                                activeGames.count_stay = 1
+                            }
+                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length - 1) {
+                                await updateGameCountLeave(activeGames)
+                                return
+                            }
                         }
-                        if(activeGames.count_leave < activeGames.active_users.length - 1) {
-                            await updateGameCountLeave(activeGames)
-                            return
-                        }
+                        stay = activeGames.count_stay
+                        leave = activeGames.count_leave
                         activeGames.count_leave = 0
+                        activeGames.count_stay = 0
                         await updateGameCountLeave(activeGames)
                         activeGames.is_voiting = false
                         await updateGameVoiting(activeGames)
+                        if(stay >= leave) {
+                            keyboard_users = []
+                            activeGames.active_users.forEach((uid) => {
+                                keyboard_users.push(activeGames.users_data[uid].user.username)
+                            })
+                            reply_markup.keyboard = chunkArray(keyboard_users, 2)
+                            for(let i = 0; i < activeGames.active_users.length; i++) {
+                                activeGames.users_data[activeGames.active_users[i]].voites = 0
+                                activeGames.users_data[activeGames.active_users[i]].voite_to = null
+                                bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Вы почему-то вдруг решили что он достоин остаться, ну ладно`, {
+                                    reply_markup,
+                                    parse_mode: 'HTML'
+                                });
+                            }
+                            await updateGameUserData(activeGames)
+                            return
+                        }
                         let usr_with_max = null
                         let max = 0
                         for(let i = 0; i < activeGames.active_users.length; i++) {

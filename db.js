@@ -211,8 +211,8 @@ const updateGameActiveUser = async (game) => {
 
 const updateGameCountLeave = async (game) => {
     await client.query(
-        'UPDATE games SET count_leave = $1 WHERE id = $2',
-        [game.count_leave, game.id]
+        'UPDATE games SET count_leave = $1, count_stay = $2 WHERE id = $3',
+        [game.count_leave, game.count_stay, game.id]
     );
 }
 
