@@ -254,7 +254,7 @@ bot.on('message', async (msg) => {
                                 });
                                 for(let i = 0; i < activeGames.active_users.length; i++) {
                                     if(activeGames.active_users[i] != usr_with_max) {
-                                        reply_markup.keyboard = [['ИЗГНАТЬ']]
+                                        reply_markup.keyboard = [['ИЗГНАТЬ'], ['ОСТАВИТЬ']]
                                         bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Дайте ${activeGames.users_data[usr_with_max].user.username} шанс оправдаться.... 🥺 \nИли выбросьте его на улицу умирать! 😈👹☠️`, {
                                             reply_markup,
                                             parse_mode: 'HTML'
