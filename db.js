@@ -57,14 +57,14 @@ const start_game = async (id) => {
             let u = await client.query('SELECT * FROM users WHERE id = $1', [res.users[i]]);
             
             users_data[res.users[i]] = {
-                parameter: data[getRandomInt(0, data.length)],
+                parameter: data[getRandomInt(0, data.length - 1)],
                 visible: {},
                 user: u.rows[0]
             }
         }
         res = await client.query(
             'UPDATE games SET users_data = $1, started_at = $2, active_users = $3, history = $4 WHERE id = $5 RETURNING *',
-            [JSON.stringify(users_data), new Date().toISOString().replace('Z', '+00'), JSON.stringify(res.users), histories[getRandomInt(0, histories.length)], id]
+            [JSON.stringify(users_data), new Date().toISOString().replace('Z', '+00'), JSON.stringify(res.users), histories[getRandomInt(0, histories.length - 1)], id]
         );
         res = res.rows[0]
     }

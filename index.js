@@ -410,7 +410,7 @@ app.use(express.json({ limit: '20mb' }));
 
 app.get('/', async (req, res) => {
     const bot_data = await bot.getMe()
-    res.send(`Ссылка на бота t.me/${bot_data.username}`)
+    res.send(`Ссылка на бота https://t.me/${bot_data.username}`)
 });
 
 app.listen(3000, () => {
