@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-const { data, histories } = require('./userData.js')
+const { sex, profession, health, phobia, hobby, fact_1, fact_2, luggage, data, histories } = require('./userData.js')
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -53,11 +53,69 @@ const start_game = async (id) => {
     if(res.rows.length) {
         res = res.rows[0]
         let users_data = {}
+        let used_proff = []
+        let used_heal = []
+        let used_pho = []
+        let used_hob = []
+        let used_fac1 = []
+        let used_fac2 = []
+        let used_lug = []
         for(let i = 0; i < res.users.length; i++) {
             let u = await client.query('SELECT * FROM users WHERE id = $1', [res.users[i]]);
-            
+            let proff_index = getRandomInt(0, profession.length - 1)
+            while(used_proff.includes(proff_index) && profession.length != res.users.length) {
+                proff_index = getRandomInt(0, profession.length - 1)
+            }
+            used_proff.push(proff_index)
+
+            let heal_index = getRandomInt(0, health.length - 1)
+            while(used_heal.includes(heal_index) && health.length != res.users.length) {
+                heal_index = getRandomInt(0, health.length - 1)
+            }
+            used_heal.push(heal_index)
+
+            let pho_index = getRandomInt(0, phobia.length - 1)
+            while(used_pho.includes(pho_index) && phobia.length != res.users.length) {
+                pho_index = getRandomInt(0, phobia.length - 1)
+            }
+            used_pho.push(pho_index)
+
+            let hob_index = getRandomInt(0, hobby.length - 1)
+            while(used_hob.includes(hob_index) && hobby.length != res.users.length) {
+                hob_index = getRandomInt(0, hobby.length - 1)
+            }
+            used_hob.push(hob_index)
+
+            let fac1_index = getRandomInt(0, fact_1.length - 1)
+            while(used_fac1.includes(fac1_index) && fact_1.length != res.users.length) {
+                fac1_index = getRandomInt(0, fact_1.length - 1)
+            }
+            used_fac1.push(fac1_index)
+
+            let fac2_index = getRandomInt(0, fact_2.length - 1)
+            while(used_fac2.includes(fac2_index) && fact_2.length != res.users.length) {
+                fac2_index = getRandomInt(0, fact_2.length - 1)
+            }
+            used_fac2.push(fac2_index)
+
+            let lug_index = getRandomInt(0, luggage.length - 1)
+            while(used_lug.includes(lug_index) && luggage.length != res.users.length) {
+                lug_index = getRandomInt(0, luggage.length - 1)
+            }
+            used_lug.push(lug_index)
+
             users_data[res.users[i]] = {
-                parameter: data[getRandomInt(0, data.length - 1)],
+                parameter: {
+                    sex: sex[getRandomInt(0, sex.length - 1)],
+                    age: getRandomInt(7, 100),
+                    profession: profession[getRandomInt(0, profession.length - 1)], 
+                    health: health[getRandomInt(0, health.length - 1)], 
+                    phobia: phobia[getRandomInt(0, phobia.length - 1)], 
+                    hobby: hobby[getRandomInt(0, hobby.length - 1)], 
+                    fact_1: fact_1[getRandomInt(0, fact_1.length - 1)], 
+                    fact_2: fact_2[getRandomInt(0, fact_2.length - 1)], 
+                    luggage: luggage[getRandomInt(0, luggage.length - 1)]
+                },
                 visible: {},
                 user: u.rows[0]
             }

@@ -15,9 +15,6 @@ const sub_menu = [['В главное меню']]
 
 const start_msg = 'Привет! 👋 Пидарас'
 
-const creatingUsers = new Set();
-
-const voitingGame =  new Set();
 
 function chunkArray(array, chunkSize) {
   const result = [];
