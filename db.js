@@ -142,6 +142,7 @@ const join_game = async (id, code) => {
     let game = null
     let registred = false
     let gameStarted = true
+    let gameEnded = true
     if(res.rows.length) {
         game = await client.query('SELECT * FROM games WHERE code = $1',[code]);
         if(game.rows.length) {
@@ -162,12 +163,15 @@ const join_game = async (id, code) => {
                 );
                 gameStarted = false
             }
+            if(game.rows[0].ended_at == null) {
+                gameEnded = false
+            }
             game = game.rows[0]
         } else {
             game = null
         }
     }
-    return {game, registred, gameStarted}
+    return {game, registred, gameStarted, gameEnded}
 }
 
 const getActiveGamesByMember = async(id) => {
