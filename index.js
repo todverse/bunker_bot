@@ -381,8 +381,7 @@ bot.on('message', async (msg) => {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
-                            await bot.sendPhoto(chatId, `./win.jpg`, {
-                            });
+                            await bot.sendPhoto(chatId, `./win.jpeg`);
                         }
                         break;
                     default:
