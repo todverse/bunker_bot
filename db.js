@@ -63,7 +63,7 @@ const start_game = async (id) => {
         for(let i = 0; i < res.users.length; i++) {
             let u = await client.query('SELECT * FROM users WHERE id = $1', [res.users[i]]);
             let proff_index = getRandomInt(0, profession.length - 1)
-            while(used_proff.includes(proff_index) && profession.length != res.users.length) {
+            while(used_proff.includes([proff_index]) && profession.length != res.users.length) {
                 proff_index = getRandomInt(0, profession.length - 1)
             }
             used_proff.push(proff_index)
@@ -108,13 +108,13 @@ const start_game = async (id) => {
                 parameter: {
                     sex: sex[getRandomInt(0, sex.length - 1)],
                     age: getRandomInt(7, 100),
-                    profession: profession[getRandomInt(0, profession.length - 1)], 
-                    health: health[getRandomInt(0, health.length - 1)], 
-                    phobia: phobia[getRandomInt(0, phobia.length - 1)], 
-                    hobby: hobby[getRandomInt(0, hobby.length - 1)], 
-                    fact_1: fact_1[getRandomInt(0, fact_1.length - 1)], 
-                    fact_2: fact_2[getRandomInt(0, fact_2.length - 1)], 
-                    luggage: luggage[getRandomInt(0, luggage.length - 1)]
+                    profession: profession[proff_index], 
+                    health: health[heal_index], 
+                    phobia: phobia[pho_index], 
+                    hobby: hobby[hob_index], 
+                    fact_1: fact_1[fac1_index], 
+                    fact_2: fact_2[fac2_index], 
+                    luggage: luggage[lug_index]
                 },
                 visible: {},
                 user: u.rows[0]

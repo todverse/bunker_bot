@@ -61,14 +61,14 @@ bot.on('message', async (msg) => {
                     let game = await join_game(userId, code)
                     if(game) {
                         if(game.gameEnded) {
-                            bot.sendMessage(chatId, `❌ Игра ${game.game.name} уже закончилась. \nПрисоеденится к ней нельзя 😣`, {
+                            await bot.sendMessage(chatId, `❌ Игра ${game.game.name} уже закончилась. \nПрисоеденится к ней нельзя 😣`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
                             return
                         }
                         if(game.gameStarted) {
-                            bot.sendMessage(chatId, `❌ Игра ${game.game.name} уже началась. \nПрисоеденится к ней нельзя 😣`, {
+                            await bot.sendMessage(chatId, `❌ Игра ${game.game.name} уже началась. \nПрисоеденится к ней нельзя 😣`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
@@ -76,13 +76,13 @@ bot.on('message', async (msg) => {
                         }
                         reply_markup.keyboard = member_main_menu
                         if(game.registred) {
-                            bot.sendMessage(chatId, `😇 Вы уже добавлены в игру ${game.game.name} 🎮`, {
+                            await bot.sendMessage(chatId, `😇 Вы уже добавлены в игру ${game.game.name} 🎮`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
                             return
                         }
-                        bot.sendMessage(chatId, `✅ Успешная регистрация в игре ${game.game.name}!`, {
+                        await bot.sendMessage(chatId, `✅ Успешная регистрация в игре ${game.game.name}!`, {
                             reply_markup,
                             parse_mode: 'HTML'
                         });
@@ -111,7 +111,7 @@ bot.on('message', async (msg) => {
                             } else {
                                 reply_markup.keyboard = member_main_menu
                             }
-                            bot.sendMessage(chatId, `❌ Для игры требуется минимум 3 участника, сейчас их ${activeGames.users.length}! 3️⃣👤`, {
+                            await bot.sendMessage(chatId, `❌ Для игры требуется минимум 3 участника, сейчас их ${activeGames.users.length}! 3️⃣👤`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
@@ -120,11 +120,11 @@ bot.on('message', async (msg) => {
                         let game = await start_game(activeGames.id);
                         reply_markup.keyboard = default_game_menu;
                         for(let i = 0; i < game.users.length; i++) {
-                            bot.sendMessage(game.users_data[game.users[i]].user.telegram_id, ` Игра ${game.name} началась`, {
+                            await bot.sendMessage(game.users_data[game.users[i]].user.telegram_id, ` Игра ${game.name} началась`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
-                            bot.sendMessage(game.users_data[game.users[i]].user.telegram_id, `${game.history}`, {
+                            await bot.sendMessage(game.users_data[game.users[i]].user.telegram_id, `${game.history}`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
@@ -135,7 +135,7 @@ bot.on('message', async (msg) => {
                         g = await end_game(activeGames);
                         reply_markup.keyboard = main_menu;
                         for(let i = 0; i < g.users.length; i++) {
-                            bot.sendMessage(g.users_data[g.users[i]].user.telegram_id, ` Игра ${g.name} досрочно завершена`, {
+                            await bot.sendMessage(g.users_data[g.users[i]].user.telegram_id, ` Игра ${g.name} досрочно завершена`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
@@ -147,7 +147,7 @@ bot.on('message', async (msg) => {
                         } else {
                             reply_markup.keyboard = member_main_menu
                         }
-                        bot.sendMessage(chatId, 'Ожидайте начала игры! 🔄', {
+                        await bot.sendMessage(chatId, 'Ожидайте начала игры! 🔄', {
                             reply_markup,
                             parse_mode: 'HTML'
                         });
@@ -169,7 +169,7 @@ bot.on('message', async (msg) => {
                             } else {
                                 activeGames.count_leave = 1
                             }
-                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length - 1) {
+                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length) {
                                 await updateGameCountLeave(activeGames)
                                 return
                             }
@@ -179,7 +179,7 @@ bot.on('message', async (msg) => {
                             } else {
                                 activeGames.count_stay = 1
                             }
-                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length - 1) {
+                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length) {
                                 await updateGameCountLeave(activeGames)
                                 return
                             }
@@ -200,7 +200,7 @@ bot.on('message', async (msg) => {
                             for(let i = 0; i < activeGames.active_users.length; i++) {
                                 activeGames.users_data[activeGames.active_users[i]].voites = 0
                                 activeGames.users_data[activeGames.active_users[i]].voite_to = null
-                                bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Вы почему-то вдруг решили что он достоин остаться, ну ладно`, {
+                                await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Вы почему-то вдруг решили что он достоин остаться, ну ладно`, {
                                     reply_markup,
                                     parse_mode: 'HTML'
                                 });
@@ -220,12 +220,8 @@ bot.on('message', async (msg) => {
                             }
                         }
                         if(usr_with_max) {
-                            await bot.sendPhoto(chatId, `./died.png`, {
+                            await bot.sendPhoto(activeGames.users_data[usr_with_max].user.telegram_id, `./died.png`, {
                                 caption: `ТЫ МЕРТВ, ПОКА! 💀`,
-                                reply_markup,
-                                parse_mode: 'HTML'
-                            });
-                            bot.sendMessage(activeGames.users_data[usr_with_max].user.telegram_id, `ТЫ МЕРТВ, ПОКА! 💀`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
@@ -249,7 +245,7 @@ bot.on('message', async (msg) => {
                                         str += activeGames.users_data[usr_with_max].parameter[key]? activeGames.users_data[usr_with_max].parameter[key]: 'скрыто'
                                         str += '\n\n'
                                     })
-                                    bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `😈 Молодцы, а теперь посмотрите кого вы выгнали на верную погибель: \n\n${str}`, {
+                                    await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `😈 Молодцы, а теперь посмотрите кого вы выгнали на верную погибель: \n\n${str}`, {
                                         reply_markup,
                                         parse_mode: 'HTML'
                                     });
@@ -292,20 +288,20 @@ bot.on('message', async (msg) => {
                                     usr_with_max = null
                                     max = Number(activeGames.users_data[activeGames.active_users[i]].voites)
                                 }
-                                bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `🗣 Все игроки проголосовали! У тебя ${activeGames.users_data[activeGames.active_users[i]].voites}`, {
+                                await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `🗣 Все игроки проголосовали! У тебя ${activeGames.users_data[activeGames.active_users[i]].voites}`, {
                                     reply_markup,
                                     parse_mode: 'HTML'
                                 });
                             }
                             if(usr_with_max) {
-                                bot.sendMessage(activeGames.users_data[usr_with_max].user.telegram_id, `👹 Начинай оправдываться, ведь выгнать хотят именно тебя!`, {
+                                await bot.sendMessage(activeGames.users_data[usr_with_max].user.telegram_id, `👹 Начинай оправдываться, ведь выгнать хотят именно тебя!`, {
                                     reply_markup,
                                     parse_mode: 'HTML'
                                 });
                                 for(let i = 0; i < activeGames.active_users.length; i++) {
                                     if(activeGames.active_users[i] != usr_with_max) {
                                         reply_markup.keyboard = leave_game_menu
-                                        bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Дайте ${activeGames.users_data[usr_with_max].user.username} шанс оправдаться.... 🥺 \nИли выбросьте его на улицу умирать! 😈👹☠️`, {
+                                        await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Дайте ${activeGames.users_data[usr_with_max].user.username} шанс оправдаться.... 🥺 \nИли выбросьте его на улицу умирать! 😈👹☠️`, {
                                             reply_markup,
                                             parse_mode: 'HTML'
                                         });
@@ -317,7 +313,7 @@ bot.on('message', async (msg) => {
                                 for(let i = 0; i < activeGames.active_users.length; i++) {
                                     activeGames.users_data[activeGames.active_users[i]].voites = 0
                                     activeGames.users_data[activeGames.active_users[i]].voite_to = null
-                                    bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Вы не пришли к единому мнению 🙄 \nПоэтому продолжаете врать, подлизываться и делать все что бы остаться в бункере 😘!`, {
+                                    await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Вы не пришли к единому мнению 🙄 \nПоэтому продолжаете врать, подлизываться и делать все что бы остаться в бункере 😘!`, {
                                         reply_markup,
                                         parse_mode: 'HTML'
                                     });
@@ -335,7 +331,7 @@ bot.on('message', async (msg) => {
                 }
                 switch(msg.text) {
                     case 'Посмотреть историю мира 🌏':
-                        bot.sendMessage(chatId, `${activeGames.history}`, {
+                        await bot.sendMessage(chatId, `${activeGames.history}`, {
                             reply_markup,
                             parse_mode: 'HTML'
                         });
@@ -346,7 +342,7 @@ bot.on('message', async (msg) => {
                                 reply_markup.keyboard = reply_markup.keyboard = chunkArray(keyboard_users, 2)
                                 reply_markup.keyboard.push(history_game_button)
                             }
-                            bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Выбери игрока которого надо изгнать из бункера! 🫵`, {
+                            await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Выбери игрока которого надо изгнать из бункера! 🫵`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
@@ -355,7 +351,7 @@ bot.on('message', async (msg) => {
                         await updateGameVoiting(activeGames)
                         break;
                     case 'Список игроков 👥':
-                        bot.sendMessage(chatId, `Выбери игрока и тебе покажет какие характеристики он открыл! 👤`, {
+                        await bot.sendMessage(chatId, `Выбери игрока и тебе покажет какие характеристики он открыл! 👤`, {
                             reply_markup,
                             parse_mode: 'HTML'
                         });
@@ -377,7 +373,7 @@ bot.on('message', async (msg) => {
                             second: 'numeric'
                         };
                         for(let i = 0; i < activeGames.users.length; i++) {
-                            bot.sendMessage(activeGames.users_data[activeGames.users[i]].user.telegram_id, `Игра завершилась, ${live_users} \n\nИменно вы оказались либо достаточно удачливыми, либо подлыми лжецами и смогли спасти своб шкуру 👁 \n\nИгра началась в ${new Date(game.started_at).toLocaleString('ru-RU', options)}. ⏳ \nЗакончилась ${new Date(game.ended_at).toLocaleString('ru-RU', options)} ⌛️`, {
+                            await bot.sendMessage(activeGames.users_data[activeGames.users[i]].user.telegram_id, `Игра завершилась, ${live_users} \n\nИменно вы оказались либо достаточно удачливыми, либо подлыми лжецами и смогли спасти своб шкуру 👁 \n\nИгра началась в ${new Date(game.started_at).toLocaleString('ru-RU', options)}. ⏳ \nЗакончилась ${new Date(game.ended_at).toLocaleString('ru-RU', options)} ⌛️`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
@@ -451,13 +447,13 @@ bot.on('message', async (msg) => {
                 user.is_creating = true
                 await updateUserCreating(user)
                 reply_markup.keyboard = sub_menu
-                bot.sendMessage(chatId, `Введи название игры:`, {
+                await bot.sendMessage(chatId, `Введи название игры:`, {
                     reply_markup,
                     parse_mode: 'HTML'
                 });
                 break;
             case 'В главное меню 🔙':
-                // bot.sendMessage(chatId, start_msg, {
+                // await bot.sendMessage(chatId, start_msg, {
                 //     reply_markup,
                 //     parse_mode: 'HTML'
                 // });
@@ -473,7 +469,7 @@ bot.on('message', async (msg) => {
                 if(user.is_creating) {
                     let game = await create_game(userId, msg.text)
                     reply_markup.keyboard = owner_start_game_menu
-                    bot.sendMessage(chatId, `Игра с названием ${game.name} создана! 🥳
+                    await bot.sendMessage(chatId, `Игра с названием ${game.name} создана! 🥳
 Скопируй и отправь ссылку другу, что бы он присоеденился к ней ⬇️
 
 <code>t.me/${bot_data.username}?start=join_game${game.code}</code>
@@ -485,7 +481,7 @@ bot.on('message', async (msg) => {
                     user.is_creating = false
                     await updateUserCreating(user)
                 } else {
-                    // bot.sendMessage(chatId, start_msg, {
+                    // await bot.sendMessage(chatId, start_msg, {
                     //     reply_markup,
                     //     parse_mode: 'HTML'
                     // });
