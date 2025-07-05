@@ -347,8 +347,9 @@ bot.on('message', async (msg) => {
                             keyboard_users.push(activeGames.users_data[uid].user.username)
                         })
                         for(let i = 0; i < activeGames.active_users.length; i++) {
+                            let k = keyboard_users.filter(item => item != activeGames.users_data[activeGames.active_users[i]].user.username);
+                            reply_markup.keyboard = chunkArray(k, 2)
                             if(activeGames.users_data[activeGames.active_users[i]].user.id != activeGames.owner) {
-                                reply_markup.keyboard = chunkArray(keyboard_users, 2)
                                 reply_markup.keyboard.push(history_game_button)
                             }
                             await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Выбери игрока которого надо изгнать из бункера! 🫵`, {
@@ -442,10 +443,32 @@ bot.on('message', async (msg) => {
                         if(curr_char && !curr_usr) {
                             activeGames.users_data[user.id].visible[curr_char] = activeGames.users_data[user.id].parameter[curr_char]
                             await updateGameUserData(activeGames)
-                            await bot.sendMessage(chatId, `Успешно открыли характеристику ${data_translate[curr_char]}`, {
-                                reply_markup,
-                                parse_mode: 'HTML'
-                            });
+                            let visible = `Характеристики игрока ${activeGames.users_data[user.id].user.username}: \n\n`
+                            Object.keys(data_translate).forEach((key) => {
+                                visible += data_translate[key] + ': '
+                                visible += activeGames.users_data[user.id].visible[key]? activeGames.users_data[user.id].visible[key]: 'скрыто'
+                                visible += '\n\n'
+                            })
+                            let keyboard_users = []
+                            activeGames.active_users.forEach((uid) => {
+                                keyboard_users.push(activeGames.users_data[uid].user.username)
+                            })
+                            for(let i = 0; i < activeGames.users.length; i++) {
+                                reply_markup.keyboard = chunkArray(keyboard_users, 2)
+                                reply_markup.keyboard.push(history_game_button)
+                                if(activeGames.owner == activeGames.users[i]) {
+                                    reply_markup.keyboard.push(start_voiting_game_button)
+                                    reply_markup.keyboard.push(end_game_button)
+                                }
+                                await bot.sendMessage(activeGames.users_data[activeGames.users[i]].user.telegram_id, `Игрок ${activeGames.users_data[user.id].user.username} открыл ${data_translate[curr_char]} \n\n${visible}`, {
+                                    reply_markup,
+                                    parse_mode: 'HTML'
+                                });
+                            }
+                            // await bot.sendMessage(chatId, `Успешно открыли характеристику ${data_translate[curr_char]}`, {
+                            //     reply_markup,
+                            //     parse_mode: 'HTML'
+                            // });
                             return
                         }
                         await bot.sendMessage(chatId, `Ты видимо где-то ошибся, вот список игроков!`, {
