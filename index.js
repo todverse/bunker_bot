@@ -163,13 +163,18 @@ bot.on('message', async (msg) => {
                     if(msg.text == 'ИЗГНАТЬ 👉' || msg.text == 'ОСТАВИТЬ 👇') {
                         let stay = 0
                         let leave = 0
+                        reply_markup.keyboard = member_main_menu
+                        await bot.sendMessage(chatId, `Ты выбрал ${msg.text}. \nОжидай пока другие сделают выбор`, {
+                            reply_markup,
+                            parse_mode: 'HTML'
+                        });
                         if(msg.text == 'ИЗГНАТЬ 👉') {
                             if(activeGames.count_leave) {
                                 activeGames.count_leave++
                             } else {
                                 activeGames.count_leave = 1
                             }
-                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length) {
+                            if((Number(activeGames.count_leave) + Number(activeGames.count_stay)) < activeGames.active_users.length - 1) {
                                 await updateGameCountLeave(activeGames)
                                 return
                             }
@@ -179,7 +184,7 @@ bot.on('message', async (msg) => {
                             } else {
                                 activeGames.count_stay = 1
                             }
-                            if((activeGames.count_leave + activeGames.count_stay) < activeGames.active_users.length) {
+                            if((Number(activeGames.count_leave) + Number(activeGames.count_stay)) < activeGames.active_users.length - 1) {
                                 await updateGameCountLeave(activeGames)
                                 return
                             }
@@ -337,9 +342,13 @@ bot.on('message', async (msg) => {
                         });
                         break;
                     case 'Начать голосование 📢':
+                        keyboard_users = []
+                        activeGames.active_users.forEach((uid) => {
+                            keyboard_users.push(activeGames.users_data[uid].user.username)
+                        })
                         for(let i = 0; i < activeGames.active_users.length; i++) {
                             if(activeGames.users_data[activeGames.active_users[i]].user.id != activeGames.owner) {
-                                reply_markup.keyboard = reply_markup.keyboard = chunkArray(keyboard_users, 2)
+                                reply_markup.keyboard = chunkArray(keyboard_users, 2)
                                 reply_markup.keyboard.push(history_game_button)
                             }
                             await bot.sendMessage(activeGames.users_data[activeGames.active_users[i]].user.telegram_id, `Выбери игрока которого надо изгнать из бункера! 🫵`, {
@@ -377,7 +386,7 @@ bot.on('message', async (msg) => {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
-                            await bot.sendPhoto(chatId, `./win.jpeg`);
+                            await bot.sendPhoto(activeGames.users_data[activeGames.users[i]].user.telegram_id, `./win.jpeg`);
                         }
                         break;
                     default:
@@ -428,6 +437,7 @@ bot.on('message', async (msg) => {
                                     parse_mode: 'HTML'
                                 });
                             }
+                            return
                         }
                         if(curr_char && !curr_usr) {
                             activeGames.users_data[user.id].visible[curr_char] = activeGames.users_data[user.id].parameter[curr_char]
@@ -436,7 +446,12 @@ bot.on('message', async (msg) => {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
+                            return
                         }
+                        await bot.sendMessage(chatId, `Ты видимо где-то ошибся, вот список игроков!`, {
+                            reply_markup,
+                            parse_mode: 'HTML'
+                        });
                 }
             }
             return
