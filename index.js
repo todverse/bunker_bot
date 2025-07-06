@@ -552,6 +552,11 @@ app.post('/notify', express.json(), async (req, res) => {
         res.send('wrong!')
         return
     }
+    const reply_markup = {
+        keyboard: main_menu,
+        resize_keyboard: true,
+        one_time_keyboard: false
+    }
     let users = await getUsers() 
     if (imageBase64) {
         // Декодируем base64 в Buffer
