@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 require('dotenv').config();
 const {CronJob} = require('cron');
-const { register, create_game, join_game, getActiveGamesByMember, start_game, updateGameUserData, updateGameActiveUser, updateGameCountLeave, updateGameOwner, end_game, updateUserCreating, updateGameVoiting } = require('./db.js')
+const { getUsers, register, create_game, join_game, getActiveGamesByMember, start_game, updateGameUserData, updateGameActiveUser, updateGameCountLeave, updateGameOwner, end_game, updateUserCreating, updateGameVoiting } = require('./db.js')
 
 const { data_translate } = require('./userData.js')
 
@@ -537,13 +537,42 @@ const app = express();
 
 app.use(express.json({ limit: '20mb' }));
 
-app.get('/', async (req, res) => {
-    const bot_data = await bot.getMe()
-    res.send(`Ссылка на бота https://t.me/${bot_data.username}`)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post('/ping', async (req, res) => {
     res.send(`pong`)
+});
+
+app.post('/notify', express.json(), async (req, res) => {
+    const { message, pass, imageBase64, imageName } = req.body;
+    if (pass != token) {
+        res.send('wrong!')
+        return
+    }
+    let users = await getUsers() 
+    if (imageBase64) {
+        // Декодируем base64 в Buffer
+        const buffer = Buffer.from(imageBase64, 'base64');
+        for(let i = 0; i < users.length; i++) {
+            await bot.sendPhoto(users[i].telegram_id, buffer, {
+                caption: message || '',
+                filename: imageName || 'image.jpg',
+                reply_markup,
+                parse_mode: 'HTML'
+            });
+        }
+        res.send('Изображение и сообщение отправлены!');
+    } else {
+        for(let i = 0; i < users.length; i++) {
+            bot.sendMessage(users[i].telegram_id, message, {
+                reply_markup,
+                parse_mode: 'HTML'
+            });
+        }
+        res.send('ok');
+    }
 });
 
 app.listen(3000, () => {
