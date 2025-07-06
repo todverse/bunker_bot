@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-const { sex, profession, health, phobia, hobby, fact_1, fact_2, luggage, data, histories } = require('./userData.js')
+const { sex, profession, health, phobia, hobby, fact_1, fact_2, luggage, histories } = require('./userData.js')
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
