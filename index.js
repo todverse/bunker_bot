@@ -2,6 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 require('dotenv').config();
 const {CronJob} = require('cron');
+const path = require('path');
 const { getUsers, register, create_game, join_game, getActiveGamesByMember, start_game, updateGameUserData, updateGameActiveUser, updateGameCountLeave, updateGameOwner, end_game, updateUserCreating, updateGameVoiting } = require('./db.js')
 
 const { data_translate } = require('./userData.js')
