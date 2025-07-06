@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Отправить уведомление</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f6f8fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h2 {
+      margin-top: 40px;
+      margin-bottom: 24px;
+      color: #2d3545;
+      letter-spacing: 1px;
+    }
+    form {
+      background: #fff;
+      padding: 32px 28px 24px 28px;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1.5px 8px rgba(0,0,0,0.06);
+      min-width: 330px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #374151;
+      font-size: 15px;
+    }
+    textarea,
+    input[type="password"] {
+      width: 94%;
+      padding: 9px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 15px;
+      transition: border 0.2s;
+      outline: none;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #2563eb;
+      background: #f0f4ff;
+    }
+    button {
+      padding: 10px;
+      background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 10px;
+      box-shadow: 0 2px 6px rgba(36,56,98,0.04);
+    }
+    button:hover {
+      background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+      transform: translateY(-1px) scale(1.02);
+    }
+    #result {
+      margin-top: 22px;
+      font-size: 15px;
+      color: #2563eb;
+      text-align: center;
+      min-height: 22px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Уведомление</h2>
+  <form id="notifyForm">
+    <div>
+      <label>Сообщение:</label>
+      <textarea type="text" name="message" required></textarea>
+    </div>
+    <div>
+      <label>Изображение:</label>
+      <input type="file" name="image" accept="image/*">
+    </div>
+    <div>
+      <label>Токен бота:</label>
+      <input type="password" name="pass" required>
+    </div>
+    <button type="submit">Отправить</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('notifyForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = this;
+      const message = form.message.value;
+      const pass = form.pass.value;
+      const fileInput = form.image;
+      let imageBase64 = null, imageName = null;
+      if (fileInput.files.length) {
+        const file = fileInput.files[0];
+        imageName = file.name;
+        // Преобразуем файл в base64 (dataURL)
+        const dataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+        // Отбрасываем 'data:image/...;base64,' (если нужно)
+        imageBase64 = dataUrl.split(',')[1];
+      }
+
+      const body = JSON.stringify({ message, pass, imageBase64, imageName });
+      const res = await fetch('/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+      const text = await res.text();
+      document.getElementById('result').textContent = text;
+    });
+  </script>
+</body>
+</html>

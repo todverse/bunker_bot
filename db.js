@@ -12,6 +12,12 @@ function getRandomInt(min, max) {
 const client = new Pool({
   connectionString: process.env.DATABASE_URL
 });
+
+const getUsers = async () => {
+    let res = await client.query('SELECT * FROM users');
+    return res.rows
+}
+
 const register = async (id, name, code) => {
     try {
         let res = await client.query('SELECT * FROM users WHERE telegram_id = $1', [id]);
@@ -245,4 +251,4 @@ const updateUserCreating = async (user) => {
     );
 }
 
-module.exports = { register, create_game, join_game, getActiveGamesByMember, start_game, updateGameUserData, updateGameActiveUser, updateGameCountLeave, updateGameOwner, end_game, updateUserCreating, updateGameVoiting }
+module.exports = { getUsers, register, create_game, join_game, getActiveGamesByMember, start_game, updateGameUserData, updateGameActiveUser, updateGameCountLeave, updateGameOwner, end_game, updateUserCreating, updateGameVoiting }
