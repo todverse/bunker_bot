@@ -383,7 +383,7 @@ bot.on('message', async (msg) => {
                             second: 'numeric'
                         };
                         for(let i = 0; i < activeGames.users.length; i++) {
-                            await bot.sendMessage(activeGames.users_data[activeGames.users[i]].user.telegram_id, `Игра завершилась, ${live_users} \n\nИменно вы оказались либо достаточно удачливыми, либо подлыми лжецами и смогли спасти своб шкуру 👁 \n\nИгра началась в ${new Date(game.started_at).toLocaleString('ru-RU', options)}. ⏳ \nЗакончилась ${new Date(game.ended_at).toLocaleString('ru-RU', options)} ⌛️`, {
+                            await bot.sendMessage(activeGames.users_data[activeGames.users[i]].user.telegram_id, `Игра завершилась, ${live_users} \n\nИменно вы оказались либо достаточно удачливыми, либо подлыми лжецами и смогли спасти свою шкуру 👁 \n\nИгра началась в ${new Date(game.started_at).toLocaleString('ru-RU', options)}. ⏳ \nЗакончилась ${new Date(game.ended_at).toLocaleString('ru-RU', options)} ⌛️`, {
                                 reply_markup,
                                 parse_mode: 'HTML'
                             });
