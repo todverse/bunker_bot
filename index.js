@@ -551,7 +551,7 @@ app.listen(3000, () => {
     console.log('REGISTER CRON')
     const cronFunc = async () => {
         try {
-            let a = await fetch('https://bunker-bot-f9sq.onrender.com/ping', {
+            let a = await fetch(process.env.PING_LINK, {
                 method: 'POST'
             })
             a = await a.text()
