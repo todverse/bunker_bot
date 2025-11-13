@@ -539,7 +539,7 @@ const app = express();
 app.use(express.json({ limit: '20mb' }));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'page.html'));
 });
 
 app.post('/ping', async (req, res) => {
